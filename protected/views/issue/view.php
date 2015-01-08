@@ -8,11 +8,11 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Issue', 'url'=>array('index')),
-	array('label'=>'Create Issue', 'url'=>array('create')),
+	array('label'=>'List Issue', 'url'=>array('index', 'pid'=>$model->project_id)),
+	array('label'=>'Create Issue', 'url'=>array('create', 'pid'=>$model->project_id)),
 	array('label'=>'Update Issue', 'url'=>array('update', 'id'=>$model->id)),
 	array('label'=>'Delete Issue', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
-	array('label'=>'Manage Issue', 'url'=>array('admin')),
+	array('label'=>'Manage Issue', 'url'=>array('admin', 'pid'=>$model->project_id)),
 );
 ?>
 
@@ -24,14 +24,9 @@ $this->menu=array(
 		'id',
 		'name',
 		'description',
-		'project_id',
-		'type_id',
-		'status_id',
-		'owner_id',
-		'requester_id',
-		'create_time',
-		'create_user_id',
-		'update_time',
-		'update_user_id',
+		array('name'=>'type_id', 'value'=>CHtml::encode($model->getTypeText())),
+		array('name'=>'status_id', 'value'=>CHtml::encode($model->getStatusText())),
+		array('name'=>'owner_id', 'value'=>isset($model->owner_id) ? CHtml::encode($model->owner->username):"unknown"),
+		array('name'=>'requester_id', 'value'=>isset($model->requester_id) ? CHtml::encode($model->requester->username):"unknown"),
 	),
 )); ?>
