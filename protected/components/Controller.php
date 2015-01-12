@@ -6,6 +6,35 @@
 class Controller extends CController
 {
 	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
+	public function accessRules()
+	{
+		return array(
+			array('allow', //allow all users to perform index and view action
+				'controllers' => array('issue', 'project', 'user'),
+				'actions' => array('view', 'index'),
+				'users' => array('@'),
+			),
+			array('allow', //allow all users to perform index and view action
+				'controllers' => array('issue', 'project', 'user'),
+				'actions' => array('create', 'update'),
+				'users' => array('@'),
+			),
+			array('allow', //allow all users to perform index and view action
+				'controllers' => array('issue', 'project', 'user'),
+				'actions' => array('admin', 'delete'),
+				'users' => array('@'),
+			),
+			array('deny', //allow all users to perform index and view action
+				'controllers' => array('issue', 'project', 'user'),
+				'users' => array('*'),
+			),
+		);
+	}
+	/**
 	 * @var string the default layout for the controller view. Defaults to '//layouts/column1',
 	 * meaning using a single column layout. See 'protected/views/layouts/column1.php'.
 	 */

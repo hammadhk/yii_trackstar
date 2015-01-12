@@ -19,8 +19,10 @@
  * @property Issue[] $issues1
  * @property Project[] $tblProjects
  */
-class User extends CActiveRecord
+class User extends TrackStarActiveRecord
 {
+	public $password_repeat;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -37,10 +39,12 @@ class User extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('username, email, password', 'required'),
-			array('create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
+			array('password_repeat', 'safe'),
+			array('username, email, password, password_repeat', 'required'),
 			array('username, email, password', 'length', 'max'=>255),
-			array('last_login_time, create_time, update_time', 'safe'),
+			array('username, email', 'unique'),
+			array('email', 'email'),
+			array('password', 'compare'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, username, email, password, last_login_time, create_time, create_user_id, update_time, update_user_id', 'safe', 'on'=>'search'),
@@ -71,6 +75,7 @@ class User extends CActiveRecord
 			'username' => 'Username',
 			'email' => 'Email',
 			'password' => 'Password',
+			'password_repeat' => 'Repeat Password',
 			'last_login_time' => 'Last Login Time',
 			'create_time' => 'Create Time',
 			'create_user_id' => 'Create User',
@@ -121,5 +126,34 @@ class User extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	/**
+	 * apply hash on password before we save the model
+	 */
+	public function afterValidate()
+	{
+		if(!$this->hasErrors())
+		{
+			$this->password = $this->hashPassword($this->password);
+		}
+	}
+	
+	/**
+	 * generate hash for password
+	 */
+	private function hashPassword($pass)
+	{
+		return md5($pass);
+	}
+	
+	/**
+	 * validates user provided password with the db one
+	 * @param string $password
+	 * @return boolean
+	 */
+	public function validatePassword($password)
+	{
+		return $this->hashPassword($password) === $this->password;
 	}
 }
